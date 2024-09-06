@@ -3,7 +3,8 @@ const app = express();
 const cors = require("cors");
 require("dotenv").config();
 const port = process.env.PORT || 5000;
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
+const { default: axios } = require("axios");
 
 // Middleware
 app.use(cors());
@@ -25,10 +26,14 @@ async function run() {
     // Connect the client to the server (optional starting in v4.7)
     // await client.connect();
 
-    const database = client.db(
-      "sslcommerzIntegration"
-    );
+    const database = client.db("sslcommerzIntegration");
 
+    app.post("/create-payment", async (req, res) => {
+      const paymentInfo = req.body;
+
+      console.log(paymentInfo);
+
+    });
 
     // Send a ping to confirm a successful connection
     // await client.db("admin").command({ ping: 1 });
