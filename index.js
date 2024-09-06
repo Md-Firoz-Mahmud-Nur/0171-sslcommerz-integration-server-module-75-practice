@@ -33,6 +33,51 @@ async function run() {
 
       console.log(paymentInfo);
 
+      const trxId = new ObjectId().toString();
+
+      const initiateData = {
+        store_id: "firoz66b896582e8c8",
+        store_passwd: "firoz66b896582e8c8@ssl",
+        total_amount: paymentInfo.amount,
+        currency: "BDT",
+        tran_id: trxId,
+        success_url: "http://localhost:3000/success-payment",
+        fail_url: "http://localhost:3000/fail",
+        cancel_url: "http://localhost:3000/cancle",
+        ipn_url: "http://localhost:3000/cancle",
+        cus_name: "Customer Name",
+        cus_email: "cust@yahoo.com&",
+        cus_add1: "Dhaka&",
+        cus_add2: "Dhaka&",
+        cus_city: "Dhaka&",
+        cus_state: "Dhaka&",
+        cus_postcode: 1000,
+        cus_country: "Bangladesh",
+        cus_phone: "01711111111",
+        cus_fax: "01711111111",
+        shipping_method: "NO",
+        product_name: "Laptop",
+        product_category: "Laptop",
+        product_profile: "general",
+        multi_card_name: "mastercard,visacard,amexcard",
+        value_a: "ref001_A&",
+        value_b: "ref002_B&",
+        value_c: "ref003_C&",
+        value_d: "ref004_D",
+      };
+
+      const response = await axios({
+        method: "POST",
+        url: "https://sandbox.sslcommerz.com/gwprocess/v4/api.php",
+        data: initiateData,
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+      });
+
+      res.send({
+        paymentUrl: response.data.GatewayPageURL,
+      });
     });
 
     // Send a ping to confirm a successful connection
