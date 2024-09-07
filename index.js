@@ -26,7 +26,8 @@ async function run() {
     // Connect the client to the server (optional starting in v4.7)
     // await client.connect();
 
-    const database = client.db("sslcommerzIntegration");
+    const SSLCommerzIntegration = client.db("SSLCommerzIntegration");
+    const payment = SSLCommerzIntegration.collection("payment");
 
     app.post("/create-payment", async (req, res) => {
       const paymentInfo = req.body;
@@ -75,9 +76,21 @@ async function run() {
         },
       });
 
-      res.send({
-        paymentUrl: response.data.GatewayPageURL,
-      });
+      const saveData = {
+        cus_name: "Dumy",
+        paymentId: trxId,
+        amount: paymentInfo.amount,
+        status: "Pending",
+      };
+
+      const save = await payment.insertOne(saveData);
+
+        if (save) {
+          res.send({
+            paymentUrl: response.data.GatewayPageURL,
+          });
+        }
+
     });
 
     // Send a ping to confirm a successful connection
