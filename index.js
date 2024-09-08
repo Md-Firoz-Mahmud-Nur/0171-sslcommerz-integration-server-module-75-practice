@@ -7,8 +7,9 @@ const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const { default: axios } = require("axios");
 
 // Middleware
-app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cors());
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_SECRET_KEY}@cluster0.fp5eepf.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
@@ -42,10 +43,10 @@ async function run() {
         total_amount: paymentInfo.amount,
         currency: "BDT",
         tran_id: trxId,
-        success_url: "http://localhost:3000/success-payment",
-        fail_url: "http://localhost:3000/fail",
-        cancel_url: "http://localhost:3000/cancle",
-        ipn_url: "http://localhost:3000/cancle",
+        success_url: "http://localhost:5000/success-payment",
+        fail_url: "http://localhost:5000/fail",
+        cancel_url: "http://localhost:5000/cancle",
+        ipn_url: "http://localhost:5000/cancle",
         cus_name: "Customer Name",
         cus_email: "cust@yahoo.com&",
         cus_add1: "Dhaka&",
@@ -85,12 +86,35 @@ async function run() {
 
       const save = await payment.insertOne(saveData);
 
-        if (save) {
-          res.send({
-            paymentUrl: response.data.GatewayPageURL,
-          });
-        }
+      if (save) {
+        res.send({
+          paymentUrl: response.data.GatewayPageURL,
+        });
+      }
+    });
 
+    app.post("/success-payment", async (req, res) => {
+      const successData = req.body;
+
+      if (successData.status !== "VALID") {
+        throw new Error("Unauthorized payment , Invalid Payment");
+      }
+
+      const query = {
+        paymentId: successData.tran_id,
+      };
+
+      const update = {
+        $set: {
+          status: "Success",
+        },
+      };
+
+      const updateData = await payment.updateOne(query, update);
+      console.log("successData", successData);
+      console.log("updateData", updateData);
+
+      res.redirect("http://localhost:5173/success");
     });
 
     // Send a ping to confirm a successful connection
