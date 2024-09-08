@@ -45,8 +45,8 @@ async function run() {
         tran_id: trxId,
         success_url: "http://localhost:5000/success-payment",
         fail_url: "http://localhost:5000/fail",
-        cancel_url: "http://localhost:5000/cancle",
-        ipn_url: "http://localhost:5000/cancle",
+        cancel_url: "http://localhost:5000/cancel",
+        ipn_url: "http://localhost:5000/cancel",
         cus_name: "Customer Name",
         cus_email: "cust@yahoo.com&",
         cus_add1: "Dhaka&",
@@ -115,6 +115,14 @@ async function run() {
       console.log("updateData", updateData);
 
       res.redirect("http://localhost:5173/success");
+    });
+
+    app.post("/fail", async (req, res) => {
+      res.redirect("http://localhost:5173/fail");
+    });
+
+    app.post("/cancel", async (req, res) => {
+      res.redirect("http://localhost:5173/cancel");
     });
 
     // Send a ping to confirm a successful connection
