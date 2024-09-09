@@ -33,8 +33,6 @@ async function run() {
     app.post("/create-payment", async (req, res) => {
       const paymentInfo = req.body;
 
-      console.log(paymentInfo);
-
       const trxId = new ObjectId().toString();
 
       const initiateData = {
@@ -48,7 +46,7 @@ async function run() {
         cancel_url: "http://localhost:5000/cancel",
         ipn_url: "http://localhost:5000/cancel",
         cus_name: "Customer Name",
-        cus_email: "cust@yahoo.com&",
+        cus_email: paymentInfo.email,
         cus_add1: "Dhaka&",
         cus_add2: "Dhaka&",
         cus_city: "Dhaka&",
@@ -81,6 +79,7 @@ async function run() {
         cus_name: "Dumy",
         paymentId: trxId,
         amount: paymentInfo.amount,
+        email: paymentInfo.email,
         status: "Pending",
       };
 
@@ -110,9 +109,7 @@ async function run() {
         },
       };
 
-      const updateData = await payment.updateOne(query, update);
-      console.log("successData", successData);
-      console.log("updateData", updateData);
+      await payment.updateOne(query, update);
 
       res.redirect("http://localhost:5173/success");
     });
